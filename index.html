@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>レイヤード案件獲得ゲーム</title>
+    <link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+    <!-- スタート画面 -->
+    <div id="start-screen" class="screen active">
+        <div class="title-container">
+            <h1 class="game-title">レイヤード案件獲得ゲーム</h1>
+        </div>
+        <div class="button-container">
+            <button id="start-game-btn" class="menu-button">ゲームスタート</button>
+            <button id="ranking-btn" class="menu-button">ランキング</button>
+            <button id="rules-btn" class="menu-button">ゲームルール</button>
+        </div>
+    </div>
+
+    <!-- ランキング画面 -->
+    <div id="ranking-screen" class="screen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ランキング</h2>
+                <button id="close-ranking-btn" class="close-button">×</button>
+            </div>
+            <div id="ranking-list" class="ranking-list">
+                <!-- ランキングデータがここに動的に挿入される -->
+                <div class="loading">ランキングを読み込み中...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ゲームルール画面 -->
+    <div id="rules-screen" class="screen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ゲームルール</h2>
+                <button id="close-rules-btn" class="close-button">×</button>
+            </div>
+            <div class="rules-content">
+                <ul>
+                    <li>案件が飛んでくるので、クリックして受注しましょう</li>
+                    <li>Kakariteを最も多く受注してください。ゲーム終了時に他の商材を多く受注した場合はゲームオーバーとなります</li>
+                    <li>クロスセル状態を1回だけ使えます（右クリック）。クロスセル状態になるとマウスが広くなります</li>
+                    <li>本部長が飛んできますが回避してください。怒りを買ってしまいます</li>
+                    <li>ゲーム終了するとコメントを登録できます。500アカウント突破のお祝いコメントを書きましょう</li>
+                </ul>
+                <h3>操作方法</h3>
+                <ul>
+                    <li>左クリック: 商材を受注</li>
+                    <li>右クリック: クロスセル状態を発動（1回限り）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ゲーム画面 -->
+    <div id="game-screen" class="screen">
+        <div class="game-ui">
+            <div class="game-stats">
+                <div class="timer">時間: <span id="timer-display">60</span>秒</div>
+                <div class="score">Kakarite: <span id="kakarite-count">0</span></div>
+                <div class="crosssell-status" id="crosssell-status">クロスセル: 使用可能</div>
+            </div>
+        </div>
+        <div id="game-canvas" class="game-canvas">
+            <!-- ゲームオブジェクトがここに動的に表示される -->
+        </div>
+        <div id="penalty-overlay" class="penalty-overlay">
+            <!-- 本部長クリック時のペナルティ表示 -->
+        </div>
+    </div>
+
+    <!-- ゲーム完了画面 -->
+    <div id="completion-screen" class="screen">
+        <div class="completion-content">
+            <h2 id="game-result-title">ゲーム結果</h2>
+            <div class="score-display">
+                <div class="final-score">得点: <span id="final-score">0</span></div>
+                <div class="score-breakdown" id="score-breakdown">
+                    <!-- 詳細スコアがここに表示される -->
+                </div>
+            </div>
+            <div class="comment-section">
+                <label for="player-name">お名前:</label>
+                <input type="text" id="player-name" placeholder="お名前を入力してください">
+                <label for="player-comment">コメント:</label>
+                <textarea id="player-comment" placeholder="500アカウント突破のお祝いコメントを書きましょう！"></textarea>
+                <button id="submit-score-btn" class="menu-button">スコアを登録</button>
+            </div>
+            <div class="completion-buttons">
+                <button id="play-again-btn" class="menu-button">もう1回</button>
+                <button id="back-to-title-btn" class="menu-button">タイトルに戻る</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- カスタムカーソル（クロスセル状態用） -->
+    <div id="custom-cursor" class="custom-cursor"></div>
+
+    <script src="src/javascript/game.js"></script>
+    <script src="src/javascript/googlesheets.js"></script>
+    <script src="src/javascript/main.js"></script>
+</body>
+</html>
