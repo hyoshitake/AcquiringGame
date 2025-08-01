@@ -72,6 +72,20 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
+.menu-button:disabled {
+    background-color: #ccc;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-button:disabled:hover {
+    background-color: #ccc;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* モーダル画面共通 */
 #ranking-screen,
 #rules-screen {
@@ -345,6 +359,18 @@ body {
     color: #252625;
 }
 
+.game-over-message {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 2px solid #dc3545;
+}
+
 .comment-section {
     margin-bottom: 20px;
     text-align: left;
@@ -451,6 +477,12 @@ body {
 
     .comment-section textarea {
         height: 60px;
+    }
+
+    .game-over-message {
+        font-size: 1.2rem;
+        padding: 8px;
+        margin-bottom: 10px;
     }
 }
 

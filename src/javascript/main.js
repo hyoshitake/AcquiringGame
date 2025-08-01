@@ -219,6 +219,9 @@ function onGameComplete(gameResult) {
     // ゲーム完了画面に結果を表示
     displayGameResult(gameResult);
 
+    // スコア送信ボタンをリセット
+    resetSubmitButton();
+
     // ゲーム完了画面を表示
     showScreen('completion');
 }
@@ -229,6 +232,14 @@ function onGameComplete(gameResult) {
  */
 function displayGameResult(result) {
     const scoreBreakdown = document.getElementById('score-breakdown');
+
+    // 勝敗判定 - Kakariteが最多かどうか
+    const isGameClear = result.kakariteCount >= Math.max(
+        result.iverCount,
+        result.medicastarCount,
+        result.symviewCount,
+        result.wakumyCount
+    );
 
     // スコア詳細の表示（アイコンを使用）
     const products = [
@@ -246,13 +257,20 @@ function displayGameResult(result) {
         </div>
     `).join('');
 
-    scoreBreakdown.innerHTML = `<div class="score-grid">${scoreBreakdownHTML}</div>`;
+    // ゲームオーバーメッセージの追加
+    const gameOverMessage = isGameClear ? '' : '<div class="game-over-message">ゲームオーバー</div>';
+
+    scoreBreakdown.innerHTML = `
+        ${gameOverMessage}
+        <div class="score-grid">${scoreBreakdownHTML}</div>
+    `;
 }
 
 /**
  * スコア送信
  */
 async function submitScore() {
+    const submitButton = document.getElementById('submit-score-btn');
     const playerName = document.getElementById('player-name').value.trim();
     const playerComment = document.getElementById('player-comment').value.trim();
 
@@ -269,13 +287,18 @@ async function submitScore() {
         return;
     }
 
+    // ボタンを送信中状態に変更
+    submitButton.textContent = '送信中...';
+    submitButton.disabled = true;
+
     try {
         console.log('スコアを送信中...', { playerName, score, playerComment });
 
         // Supabaseにスコアを送信
         await SupabaseAPI.submitScore(playerName, score, playerComment);
 
-        alert('スコアが正常に登録されました！');
+        // 送信完了状態に変更
+        submitButton.textContent = '送信完了';
 
         // フォームをリセット
         document.getElementById('player-name').value = '';
@@ -284,7 +307,20 @@ async function submitScore() {
     } catch (error) {
         console.error('スコアの送信に失敗しました:', error);
         alert('スコアの送信に失敗しました。もう一度お試しください。');
+
+        // エラー時はボタンを元に戻す
+        submitButton.textContent = 'スコアを登録';
+        submitButton.disabled = false;
     }
+}
+
+/**
+ * スコア送信ボタンをリセット
+ */
+function resetSubmitButton() {
+    const submitButton = document.getElementById('submit-score-btn');
+    submitButton.textContent = 'スコアを登録';
+    submitButton.disabled = false;
 }
 
 /**
