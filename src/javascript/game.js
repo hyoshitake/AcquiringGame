@@ -9,13 +9,15 @@ class Game {
 
         // ゲーム設定
         this.config = {
-            gameTime: 60, // ゲーム時間（秒）
+            gameTime: 30, // ゲーム時間（秒）- 60秒から30秒に変更
             spawnInterval: 800, // オブジェクト生成間隔（ミリ秒）
             objectLifetime: 3000, // オブジェクトの生存時間（ミリ秒）
             minSize: 12, // 最小サイズ（px）
-            maxSize: 120, // 最大サイズ（px）
+            maxSize: 240, // 最大サイズ（px）- 120pxから240pxに変更
             penaltyTime: 3000, // ペナルティ時間（ミリ秒）
-            crosssellCursorSize: 64 // クロスセル時のカーソルサイズ
+            crosssellCursorSize: 64, // クロスセル時のカーソルサイズ
+            crosssellDuration: 5000, // クロスセル状態の持続時間（ミリ秒）
+            fadeOutDuration: 300 // アイコンの透過時間（ミリ秒）
         };
 
         // ゲーム状態
@@ -31,6 +33,7 @@ class Game {
             bossClickCount: 0
         };
         this.crosssellUsed = false;
+        this.crosssellActive = false; // クロスセル状態がアクティブかどうか
         this.isInPenalty = false;
 
         // ゲームオブジェクト
@@ -43,6 +46,7 @@ class Game {
         this.gameTimer = null;
         this.spawnTimer = null;
         this.penaltyTimer = null;
+        this.crosssellTimer = null; // クロスセル状態のタイマー
 
         // 商材とボスの定義
         this.products = [
@@ -75,6 +79,7 @@ class Game {
         this.timeLeft = this.config.gameTime;
         this.resetScore();
         this.crosssellUsed = false;
+        this.crosssellActive = false;
         this.isInPenalty = false;
 
         // UIの初期化
@@ -192,6 +197,11 @@ class Game {
             clearTimeout(this.penaltyTimer);
             this.penaltyTimer = null;
         }
+
+        if (this.crosssellTimer) {
+            clearTimeout(this.crosssellTimer);
+            this.crosssellTimer = null;
+        }
     }
 
     /**
@@ -232,10 +242,10 @@ class Game {
         // アニメーション開始
         gameObject.startAnimation();
 
-        // 生存時間後に削除
+        // 生存時間 + フェードアウト時間後に削除
         setTimeout(() => {
             this.removeObject(gameObject);
-        }, this.config.objectLifetime);
+        }, this.config.objectLifetime + this.config.fadeOutDuration);
     }
 
     /**
@@ -289,7 +299,7 @@ class Game {
         const clickY = event.clientY;
 
         // カーソルサイズを考慮したクリック範囲
-        const cursorSize = this.crosssellUsed ? this.config.crosssellCursorSize : 20;
+        const cursorSize = this.crosssellActive ? this.config.crosssellCursorSize : 20;
         const clickRadius = cursorSize / 2;
 
         // 最前面のオブジェクトを検索（z-indexが最も高い）
@@ -323,7 +333,30 @@ class Game {
 
         console.log('クロスセル状態を発動');
         this.crosssellUsed = true;
+        this.crosssellActive = true;
         this.customCursor.classList.add('crosssell');
+
+        // 5秒後にクロスセル状態を解除
+        this.crosssellTimer = setTimeout(() => {
+            this.deactivateCrosssell();
+        }, this.config.crosssellDuration);
+
+        this.updateUI();
+    }
+
+    /**
+     * クロスセル状態を解除
+     */
+    deactivateCrosssell() {
+        console.log('クロスセル状態を解除');
+        this.crosssellActive = false;
+        this.customCursor.classList.remove('crosssell');
+
+        if (this.crosssellTimer) {
+            clearTimeout(this.crosssellTimer);
+            this.crosssellTimer = null;
+        }
+
         this.updateUI();
     }
 
@@ -437,7 +470,10 @@ class Game {
         // クロスセル状態更新
         const crosssellStatus = document.getElementById('crosssell-status');
         if (crosssellStatus) {
-            if (this.crosssellUsed) {
+            if (this.crosssellUsed && this.crosssellActive) {
+                crosssellStatus.textContent = 'クロスセル: アクティブ';
+                crosssellStatus.className = 'crosssell-status active';
+            } else if (this.crosssellUsed) {
                 crosssellStatus.textContent = 'クロスセル: 使用済み';
                 crosssellStatus.className = 'crosssell-status used';
             } else {
@@ -479,6 +515,8 @@ class GameObject {
         this.element.style.zIndex = '1';
 
         this.startTime = Date.now();
+        this.isFading = false; // フェードアウト中かどうか
+        this.fadeStartTime = null; // フェードアウト開始時間
     }
 
     /**
@@ -491,17 +529,22 @@ class GameObject {
             }
 
             const elapsed = Date.now() - this.startTime;
-            const progress = Math.min(elapsed / this.config.objectLifetime, 1);
+            const sizeProgress = Math.min(elapsed / this.config.objectLifetime, 1);
+
+            // サイズが最大に達したらフェードアウト開始
+            if (sizeProgress >= 1 && !this.isFading) {
+                this.startFadeOut();
+            }
 
             // 位置の更新
-            const currentX = this.startX + (this.endX - this.startX) * progress;
-            const currentY = this.startY + (this.endY - this.startY) * progress;
+            const currentX = this.startX + (this.endX - this.startX) * sizeProgress;
+            const currentY = this.startY + (this.endY - this.startY) * sizeProgress;
 
             // サイズの更新（一点透視図法）
-            const currentSize = this.config.minSize + (this.config.maxSize - this.config.minSize) * progress;
+            const currentSize = this.config.minSize + (this.config.maxSize - this.config.minSize) * sizeProgress;
 
             // z-indexの更新（手前にあるものほど高い）
-            const zIndex = Math.floor(progress * 100);
+            const zIndex = Math.floor(sizeProgress * 100);
 
             this.element.style.left = (currentX - currentSize / 2) + 'px';
             this.element.style.top = (currentY - currentSize / 2) + 'px';
@@ -509,7 +552,20 @@ class GameObject {
             this.element.style.height = currentSize + 'px';
             this.element.style.zIndex = zIndex;
 
-            if (progress < 1) {
+            // フェードアウト処理
+            if (this.isFading && this.fadeStartTime) {
+                const fadeElapsed = Date.now() - this.fadeStartTime;
+                const fadeProgress = Math.min(fadeElapsed / this.config.fadeOutDuration, 1);
+                const opacity = 1 - fadeProgress;
+                this.element.style.opacity = opacity;
+
+                if (fadeProgress >= 1) {
+                    // フェードアウト完了、オブジェクトを削除
+                    return;
+                }
+            }
+
+            if (sizeProgress < 1 || this.isFading) {
                 requestAnimationFrame(animate);
             }
         };
@@ -518,9 +574,23 @@ class GameObject {
     }
 
     /**
+     * フェードアウト開始
+     */
+    startFadeOut() {
+        this.isFading = true;
+        this.fadeStartTime = Date.now();
+        console.log(`${this.data.name} がフェードアウト開始`);
+    }
+
+    /**
      * クリック可能かどうかを判定
      */
     isClickable(clickX, clickY, clickRadius) {
+        // フェードアウト中はクリック不可
+        if (this.isFading) {
+            return false;
+        }
+
         const rect = this.element.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;

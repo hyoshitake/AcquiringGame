@@ -238,6 +238,11 @@ body {
     color: #28a745;
 }
 
+.crosssell-status.active {
+    color: #007bff;
+    font-weight: bold;
+}
+
 .crosssell-status.used {
     color: #dc3545;
 }
@@ -252,7 +257,7 @@ body {
 /* ゲームオブジェクト */
 .game-object {
     position: absolute;
-    cursor: pointer;
+    cursor: none; /* カスタムカーソルを使用するため無効化 */
     transition: none;
     user-select: none;
     pointer-events: auto;
@@ -323,6 +328,32 @@ body {
     font-size: 1rem;
     color: #666;
     line-height: 1.5;
+}
+
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.score-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.score-count {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #252625;
 }
 
 .comment-section {
@@ -406,6 +437,16 @@ body {
     .completion-buttons {
         flex-direction: column;
         align-items: center;
+    }
+
+    .score-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .score-icon {
+        width: 30px;
+        height: 30px;
     }
 }
 

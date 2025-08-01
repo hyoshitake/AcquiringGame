@@ -250,15 +250,23 @@ function displayGameResult(result) {
         finalScore.textContent = '0';
     }
 
-    // スコア詳細の表示
-    scoreBreakdown.innerHTML = `
-        <div>Kakarite: ${result.kakariteCount}件</div>
-        <div>Iver: ${result.iverCount}件</div>
-        <div>Medicastar: ${result.medicastarCount}件</div>
-        <div>Symview: ${result.symviewCount}件</div>
-        <div>Wakumy: ${result.wakumyCount}件</div>
-        <div>本部長クリック: ${result.bossClickCount}回</div>
-    `;
+    // スコア詳細の表示（アイコンを使用）
+    const products = [
+        { name: 'kakarite', image: 'src/assets/logo_kakarite_symbol_color.png', count: result.kakariteCount },
+        { name: 'iver', image: 'src/assets/logo_iver_symbol_color.png', count: result.iverCount },
+        { name: 'medicastar', image: 'src/assets/logo_medicastar_symbol_color.png', count: result.medicastarCount },
+        { name: 'symview', image: 'src/assets/logo_symview_symbol_color.png', count: result.symviewCount },
+        { name: 'wakumy', image: 'src/assets/logo_wakumy_symbol_color.png', count: result.wakumyCount }
+    ];
+
+    const scoreBreakdownHTML = products.map(product => `
+        <div class="score-item">
+            <img src="${product.image}" alt="${product.name}" class="score-icon">
+            <div class="score-count">${product.count}</div>
+        </div>
+    `).join('');
+
+    scoreBreakdown.innerHTML = `<div class="score-grid">${scoreBreakdownHTML}</div>`;
 }
 
 /**
