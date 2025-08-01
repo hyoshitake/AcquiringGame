@@ -10,7 +10,7 @@
 
 ## 技術スタック
 - **言語**: JavaScript、HTML、CSS
-- **DB**: Google Sheet
+- **DB**: Supabase (PostgreSQL)
 - **インフラ**: Render（静的サイトホスティング）
 
 ## ゲーム画面構成
@@ -33,7 +33,7 @@
 - クリックできるのは一番手前に表示されている商材のみ
 - 一点透視図法の軌道で大きくなります
 - 本部長アイコンをクリックすると3秒間クリック無効（画面が赤く点滅）
-- 右クリックで「クロスセル状態」（128×128pxのカーソル範囲、1回限り）
+- 右クリックで「クロスセル状態」（128×128pxのカーソル範囲、5秒間限定、1回限り）
 
 ## アイコン種類
 ### 商材
@@ -50,10 +50,30 @@
 - 三角さん: `/src/assets/misumi.png`
 
 ## DB構成
-Google Sheetに以下の列でデータを保存：
-1. 名前
-2. 得点
-3. コメント
+Supabaseに以下のテーブルでデータを保存：
+
+### テーブル名: `scores`
+- **id**: int8 (主キー、自動生成)
+- **created_at**: timestamp (作成日時、自動生成)
+- **name**: varchar (プレイヤー名)
+- **score**: int4 (得点)
+- **comment**: text (コメント)
+
+## Supabase設定手順
+1. [Supabase](https://supabase.com/)でプロジェクトを作成
+2. SQL Editorで以下のテーブルを作成:
+```sql
+CREATE TABLE scores (
+  id BIGSERIAL PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  name VARCHAR NOT NULL,
+  score INTEGER NOT NULL,
+  comment TEXT
+);
+```
+3. `src/javascript/supabase.js`の以下を更新:
+   - `SUPABASE_URL`: プロジェクトURL
+   - `SUPABASE_ANON_KEY`: プロジェクトのAnon Key
 
 ## ディレクトリ構成
 ```
@@ -64,6 +84,10 @@ Google Sheetに以下の列でデータを保存：
     ├── css/          # CSSファイル
     ├── html/         # HTMLファイル
     └── javascript/   # JavaScriptファイル
+        ├── game.js           # ゲームエンジン
+        ├── main.js           # メイン制御
+        ├── supabase.js       # Supabase API連携
+        └── googlesheets.js   # Google Sheets API連携（後方互換用）
 ```
 
 ## デザイン仕様
@@ -72,11 +96,14 @@ Google Sheetに以下の列でデータを保存：
 - **文字色**: #252625
 
 ## 開発・デプロイ
-1. ローカルでの開発: `index.html`をブラウザで開く
-2. デプロイ: Renderの静的サイト機能を使用
+1. **ローカル開発**: `index.html`をブラウザで開く
+2. **データベース**: Supabaseの設定が必要（上記参照）
+3. **デプロイ**: Renderの静的サイト機能を使用
 
 ## 使用方法
-1. `index.html`をブラウザで開く
-2. 「ゲームスタート」をクリックしてゲーム開始
-3. 飛んでくる商材をクリックして案件獲得
-4. Kakariteを最も多く獲得することを目指す
+1. Supabaseプロジェクトをセットアップ
+2. `src/javascript/supabase.js`の設定を更新
+3. `index.html`をブラウザで開く
+4. 「ゲームスタート」をクリックしてゲーム開始
+5. 飛んでくる商材をクリックして案件獲得
+6. Kakariteを最も多く獲得することを目指す

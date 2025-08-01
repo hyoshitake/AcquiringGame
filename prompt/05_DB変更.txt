@@ -1,0 +1,23 @@
+# 変更内容
+DBをGoogle SheetからSupabaseに変更してください。
+
+## Supabase接続先
+以下の接続文字列で接続することができます。
+postgresql://postgres:jEQWvG3RWzHkZxwa@db.omyqjwnlnmqjeuwxqbva.supabase.co:5432/postgres
+
+## Table構成
+### Table名
+scores
+
+### 列名
+- id: int8
+- created_at: timestamp
+- name: varchar
+- score: int4
+- comment: text
+
+## 修正方針
+- googlesheets.jsはそのまま残してください
+- 新たにsupabase.jsを作成しSupabaseAPIクラスを作成してください
+- SupabaseAPIクラスにはgooglesheets.jsと同様にgetRankingsとsubmitScoreを用意してください
+- main.jsのGoogleSheetsAPIをSupabaseAPIに変更してください。

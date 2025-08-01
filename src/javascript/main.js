@@ -166,8 +166,8 @@ async function showRanking() {
     rankingList.innerHTML = '<div class="loading">ランキングを読み込み中...</div>';
 
     try {
-        // Google Sheetsからランキングデータを取得
-        const rankings = await GoogleSheetsAPI.getRankings();
+        // Supabaseからランキングデータを取得
+        const rankings = await SupabaseAPI.getRankings();
         displayRankings(rankings);
     } catch (error) {
         console.error('ランキングの取得に失敗しました:', error);
@@ -272,8 +272,8 @@ async function submitScore() {
     try {
         console.log('スコアを送信中...', { playerName, score, playerComment });
 
-        // Google Sheetsにスコアを送信
-        await GoogleSheetsAPI.submitScore(playerName, score, playerComment);
+        // Supabaseにスコアを送信
+        await SupabaseAPI.submitScore(playerName, score, playerComment);
 
         alert('スコアが正常に登録されました！');
 
