@@ -10,12 +10,12 @@ class Game {
         // ゲーム設定
         this.config = {
             gameTime: 30, // ゲーム時間（秒）- 60秒から30秒に変更
-            spawnInterval: 800, // オブジェクト生成間隔（ミリ秒）
+            spawnInterval: 615, // オブジェクト生成間隔（ミリ秒）- 3割増加のため短縮
             objectLifetime: 3000, // オブジェクトの生存時間（ミリ秒）
             minSize: 12, // 最小サイズ（px）
             maxSize: 240, // 最大サイズ（px）- 120pxから240pxに変更
             penaltyTime: 3000, // ペナルティ時間（ミリ秒）
-            crosssellCursorSize: 64, // クロスセル時のカーソルサイズ
+            crosssellCursorSize: 128, // クロスセル時のカーソルサイズ - 64pxから128pxに変更
             crosssellDuration: 5000, // クロスセル状態の持続時間（ミリ秒）
             fadeOutDuration: 300 // アイコンの透過時間（ミリ秒）
         };

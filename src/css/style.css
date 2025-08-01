@@ -323,14 +323,14 @@ body {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
-    margin: 15px 0;
+    margin: 5px 0;
 }
 
 .score-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 0px;
 }
 
 .score-icon {
@@ -405,8 +405,8 @@ body {
 }
 
 .custom-cursor.crosssell {
-    width: 64px;
-    height: 64px;
+    width: 128px;
+    height: 128px;
     background-color: rgba(255, 99, 88, 0.3);
     border-color: #FF6358;
     border-width: 3px;
