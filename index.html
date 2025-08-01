@@ -77,9 +77,7 @@
     <!-- ゲーム完了画面 -->
     <div id="completion-screen" class="screen">
         <div class="completion-content">
-            <h2 id="game-result-title">ゲーム結果</h2>
             <div class="score-display">
-                <div class="final-score">得点: <span id="final-score">0</span></div>
                 <div class="score-breakdown" id="score-breakdown">
                     <!-- 詳細スコアがここに表示される -->
                 </div>
@@ -89,7 +87,9 @@
                 <input type="text" id="player-name" placeholder="お名前を入力してください">
                 <label for="player-comment">コメント:</label>
                 <textarea id="player-comment" placeholder="500アカウント突破のお祝いコメントを書きましょう！"></textarea>
-                <button id="submit-score-btn" class="menu-button">スコアを登録</button>
+                <div class="submit-button-container">
+                    <button id="submit-score-btn" class="menu-button">スコアを登録</button>
+                </div>
             </div>
             <div class="completion-buttons">
                 <button id="play-again-btn" class="menu-button">もう1回</button>

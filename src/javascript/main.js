@@ -228,27 +228,7 @@ function onGameComplete(gameResult) {
  * @param {Object} result - ゲーム結果
  */
 function displayGameResult(result) {
-    const resultTitle = document.getElementById('game-result-title');
-    const finalScore = document.getElementById('final-score');
     const scoreBreakdown = document.getElementById('score-breakdown');
-
-    // 勝敗判定
-    const isSuccess = result.kakariteCount >= Math.max(
-        result.iverCount,
-        result.medicastarCount,
-        result.symviewCount,
-        result.wakumyCount
-    );
-
-    if (isSuccess) {
-        resultTitle.textContent = 'ゲームクリア！';
-        resultTitle.className = 'success';
-        finalScore.textContent = result.kakariteCount;
-    } else {
-        resultTitle.textContent = 'ゲームオーバー';
-        resultTitle.className = 'failure';
-        finalScore.textContent = '0';
-    }
 
     // スコア詳細の表示（アイコンを使用）
     const products = [
@@ -275,8 +255,9 @@ function displayGameResult(result) {
 async function submitScore() {
     const playerName = document.getElementById('player-name').value.trim();
     const playerComment = document.getElementById('player-comment').value.trim();
-    const finalScoreElement = document.getElementById('final-score');
-    const score = parseInt(finalScoreElement.textContent);
+
+    // 最後のゲーム結果からKakariteのスコアを取得
+    const score = gameInstance ? gameInstance.score.kakariteCount : 0;
 
     if (!playerName) {
         alert('お名前を入力してください');
